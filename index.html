@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AR Video on Image Detection</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+      body, html { margin: 0; padding: 0; overflow: hidden; }
+      #startButton { position: absolute; top: 20px; left: 20px; z-index: 1000; }
+    </style>
+  </head>
+  <body>
+    <button id="startButton">Start AR</button>
+    <a-scene embedded arjs>
+      <a-marker preset="hiro">
+        <a-video
+          id="videoElement"
+          src="#video"
+          width="1"
+          height="0.6"
+          position="0 0.3 0"
+          rotation="-90 0 0"
+          loop
+          crossorigin="anonymous"
+          visible="false"
+        ></a-video>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+    <video
+      id="video"
+      src="video.mp4"
+      crossorigin="anonymous"
+      style="display: none;"
+    ></video>
+    <script>
+      document.getElementById('startButton').addEventListener('click', function() {
+        const video = document.querySelector('#video');
+        video.play().then(() => {
+          document.querySelector('#videoElement').setAttribute('visible', 'true');
+          this.style.display = 'none';
+        }).catch(error => {
+          console.error('Error attempting to play the video:', error);
+        });
+      });
+
+      document.querySelector('a-marker').addEventListener('markerFound', () => {
+        const video = document.querySelector('#video');
+        video.play();
+      });
+
+      document.querySelector('a-marker').addEventListener('markerLost', () => {
+        const video = document.querySelector('#video');
+        video.pause();
+      });
+    </script>
+  </body>
+</html>
